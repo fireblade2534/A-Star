@@ -27,6 +27,7 @@ class AStar:
         self.AllowDiagonals=AllowDiagonals
         self.Rows=Board.Rows
         self.Columns=Board.Column
+        
         for Y,F in enumerate(Board.Board):
             for X,G in enumerate(F):
                 self.Board[(X,Y)]={"Cost":G,"Traveled":False,"Prevous":(-1,-1)}
@@ -39,7 +40,7 @@ class AStar:
                 if ((X != 0 or Y != 0) and self.AllowDiagonals) or ((X == 0 or Y == 0) and (X != 0 or Y != 0) and not self.AllowDiagonals):
                     if self.AgentLocation[0] + X >= 0 and self.AgentLocation[0] + X < self.Rows and  self.AgentLocation[1] + Y >= 0 and self.AgentLocation[1] + Y < self.Columns:
                         Check=self.Board[(self.AgentLocation[0] + X,self.AgentLocation[1] + Y)]
-                        print(Check)
+                        #print(Check)
                         if Check["Cost"] != -1 and Check["Traveled"] == False:
                             Candidates[(self.AgentLocation[0] + X, self.AgentLocation[1] + Y)]=Check["Cost"]
         return Candidates
@@ -71,7 +72,7 @@ class AStar:
             Out[A[1]][A[0]]="🟩"
         for X in range(0,len(Out)):
             Out[X]="".join(Out[X])
-        print("\n".join(Out))
+        print("\n".join(Out) + "\n")
 
     def CompilePath(self):
         Path=[]
@@ -87,7 +88,7 @@ class AStar:
         
             
 
-    def RunPathFind(self,Target):
+    def RunPathFind(self,Target,PrintBoard=True):
         self.Target=Target
         StartDistance=self.Hurestic(self.AgentLocation)
         Count=0
@@ -98,12 +99,16 @@ class AStar:
             if len(Candidates) == 0:
 
                 #DoBackProp
+                if self.AgentLocation == (-1,-1):
+                    return False
                 self.Board[self.AgentLocation]["Traveled"]=True
+                
                 self.AgentLocation=self.Board[self.AgentLocation]["Prevous"]
                 #print(":()")
                 #pass
             else:
-                self.PrintBoard()
+                if PrintBoard:
+                    self.PrintBoard()
                 #print("1")
                 for A,B in Candidates.items():
                     Huristic=self.Hurestic(A)
@@ -120,23 +125,29 @@ class AStar:
 
                 #time.sleep(0.4)
             if self.AgentLocation == self.Target:
-                return
+                return self.CompilePath()
 
-        print(self.GetCandidates())
+        #print(self.GetCandidates())
 
 
 if __name__ == "__main__":
-    Target=(33,31)
-    Board=Grid(35,35)
+
+    Target=(799,799)
+    Board=Grid(800,800)
     #print(Board.Board)
     #Board.Board[1][1]=-1
     #print(Board.Board)
     Board.Board[Target[0]][Target[1]]=1
     AS=AStar(Board,AllowDiagonals=False,HWeight=3)
     
-    
-    print(AS.RunPathFind(Target=Target))
-
+    Start=time.time()
+    #time.sleep(1)
+    Out=AS.RunPathFind(Target=Target,PrintBoard=False)
+    if Out != False:
+        print("Success")
+    else:
+        print("Failed")
+    print(time.time() - Start)
                     
 
 
