@@ -19,7 +19,7 @@ class Grid:
 
 
 class AStar:
-    def __init__(self,Board,FWeight=1.37,AllowDiagonals=False):
+    def __init__(self,Board,FWeight=1.4,AllowDiagonals=False):
         self.Board={}
         self.AgentLocation=(0,0)
         self.FWeight=FWeight
@@ -153,10 +153,11 @@ class AStar:
                             self.PrintBoard(RenderEnd=True,Path=Path)
                         return Path
                     return False
+                
             if PrintBoard:
                 self.PrintBoard(ShowAgent=ShowSearching)
             if ShowSearching:
-                time.sleep(0.08)
+                time.sleep(0.05)
             if Steps == 30000:
                 return False
             #return 
@@ -281,13 +282,13 @@ class GreedyBestFirstSearch:
 
 if __name__ == "__main__":
 
-    Target=(random.randint(20,27),random.randint(20,27))
-    Board=Grid(30,30,WallChance=35)
+    Target=(random.randint(20,24),random.randint(20,24))
+    Board=Grid(25,25,WallChance=30)
     #print(Board.Board)
     Board.Board[0][0]=1
     #Board.Board[Target[0]][Target[1]]=1
     #print(Board.Board)
-    Board.Board[Target[0]][Target[1]]=1
+    Board.Board[Target[1]][Target[0]]=1
     AS=AStar(Board,AllowDiagonals=False,FWeight=1.4)
     GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
     
@@ -297,7 +298,7 @@ if __name__ == "__main__":
     if OutAS != False:
         print("Success AS")
         print(time.time() - Start)
-        exit()
+        #exit()
         Start=time.time()
         OutGBFS=GBFS.RunPathFind(Target=Target,PrintBoard=False)
         if OutGBFS != False:
