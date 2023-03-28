@@ -18,7 +18,7 @@ class Grid:
                 self.Board.append(Row)
 
 
-class AStar:
+class GreedyBestFirstSearch:
     def __init__(self,Board,HWeight=1,CWeight=1,AllowDiagonals=False):
         self.Board={}
         self.AgentLocation=(0,0)
@@ -132,13 +132,13 @@ class AStar:
 
 if __name__ == "__main__":
 
-    Target=(799,799)
-    Board=Grid(800,800)
+    Target=(24,24)
+    Board=Grid(25,25)
     #print(Board.Board)
     #Board.Board[1][1]=-1
     #print(Board.Board)
     Board.Board[Target[0]][Target[1]]=1
-    AS=AStar(Board,AllowDiagonals=False,HWeight=3)
+    AS=GreedyBestFirstSearch(Board,AllowDiagonals=False,HWeight=3)
     
     Start=time.time()
     #time.sleep(1)
