@@ -281,13 +281,14 @@ class GreedyBestFirstSearch:
 
 if __name__ == "__main__":
 
-    Target=(25,25)
+    Target=(random.randint(20,27),random.randint(20,27))
     Board=Grid(30,30,WallChance=35)
     #print(Board.Board)
-    #Board.Board[1][1]=-1
+    Board.Board[0][0]=1
+    #Board.Board[Target[0]][Target[1]]=1
     #print(Board.Board)
     Board.Board[Target[0]][Target[1]]=1
-    AS=AStar(Board,AllowDiagonals=False,FWeight=1.37)
+    AS=AStar(Board,AllowDiagonals=False,FWeight=1.4)
     GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
     
     Start=time.time()
