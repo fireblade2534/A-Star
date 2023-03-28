@@ -5,6 +5,7 @@ import time
 class Grid:
     def __init__(self,Rows,Column,RandomGen=True,Board=[],WallChance=30):
         self.Board=Board
+        
         self.Rows=Rows
         self.Column=Column
         if RandomGen:
@@ -58,6 +59,7 @@ class AStar:
         Out=[[" " for X in range(0,self.Columns)] for Y in range(0,self.Rows)]
         #print(Out)
         for A,B in self.Board.items():
+            #print(A[1],A[0])
             Item=""
             if B["Cost"] == -1:
                 Item="⬛"
@@ -281,35 +283,36 @@ class GreedyBestFirstSearch:
 
 
 if __name__ == "__main__":
+    while True:
+        Target=(random.randint(10,14),random.randint(10,14))
 
-    Target=(random.randint(20,24),random.randint(20,24))
-    Board=Grid(25,25,WallChance=30)
-    #print(Board.Board)
-    Board.Board[0][0]=1
-    #Board.Board[Target[0]][Target[1]]=1
-    #print(Board.Board)
-    Board.Board[Target[1]][Target[0]]=1
-    AS=AStar(Board,AllowDiagonals=False,FWeight=1.4)
-    GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
-    
-    Start=time.time()
-    #time.sleep(1)
-    OutAS=AS.RunPathFind(Target=Target,PrintBoard=True,ShowSearching=True)
-    if OutAS != False:
-        print("Success AS")
-        print(time.time() - Start)
-        #exit()
+        Board=Grid(15,15,WallChance=30,Board=[])
+        print(Board.Board,len(Board.Board))
+        Board.Board[0][0]=1
+        #Board.Board[Target[0]][Target[1]]=1
+        #print(Board.Board)
+        Board.Board[Target[1]][Target[0]]=1
+        AS=AStar(Board,AllowDiagonals=False,FWeight=1.4)
+        GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
+        
         Start=time.time()
-        OutGBFS=GBFS.RunPathFind(Target=Target,PrintBoard=False)
-        if OutGBFS != False:
-            print("Success GBFS")
+        #time.sleep(1)
+        OutAS=AS.RunPathFind(Target=Target,PrintBoard=True,ShowSearching=True)
+        if OutAS != False:
+            print("Success AS")
             print(time.time() - Start)
-            
+            #exit()
+            Start=time.time()
+            #OutGBFS=GBFS.RunPathFind(Target=Target,PrintBoard=False)
+            #if OutGBFS != False:
+               # print("Success GBFS")
+               # print(time.time() - Start)
+                
+            #else:
+              #  print("Failed GBFS")
         else:
-            print("Failed GBFS")
-    else:
-        print("Failed AS")
-
+            print("Failed AS")
+        time.sleep(10)
     
 
     
