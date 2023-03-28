@@ -54,7 +54,7 @@ class AStar:
         return abs(DX) + abs(DY)
 
 
-    def PrintBoard(self,RenderEnd=False,Path=[],ShowAgent=False):
+    def PrintBoard(self,RenderEnd=False,Path=[],ShowAgent=False,StartLocation=(0,0),Steps=""):
 
         Out=[[" " for X in range(0,self.Columns)] for Y in range(0,self.Rows)]
         #print(Out)
@@ -75,13 +75,13 @@ class AStar:
             for A in Path:
                 Out[A[1]][A[0]]="🟩"
         Out[self.Target[1]][self.Target[0]]="🟪"
-
+        Out[StartLocation[1]][StartLocation[0]]="🟧"
 
         if ShowAgent:
             Out[self.AgentLocation[1]][self.AgentLocation[0]]="🟦"
         for X in range(0,len(Out)):
             Out[X]="".join(Out[X])
-        print("\n".join(Out) + "\n")
+        print("\n".join(Out) + "\n" + str(Steps))
 
     def CompilePath(self):
         Path=[]
@@ -111,11 +111,11 @@ class AStar:
     def GetLowestOpenCost(self):
         return list(filter(lambda X: not X[1]["Checked"],sorted(self.OpenList.items(),key=lambda X: X[1]["CostF"])))
 
-    def RunPathFind(self,Target,PrintBoard=True,PrintFinal=True,ShowSearching=False):
+    def RunPathFind(self,Target,PrintBoard=True,PrintFinal=True,ShowSearching=False,StartLocation=(0,0)):
         self.Target=Target
         self.OpenList={}
         self.ClosedList={}
-        self.OpenList[(0,0)]={"CostF":self.Hurestic((0,0),Dia=True),"CostG":0,"Parent":(-1,-1),"Checked":False}
+        self.OpenList[StartLocation]={"CostF":self.Hurestic(StartLocation,Dia=True),"CostG":0,"Parent":(-1,-1),"Checked":False}
         Steps=0
         while True:
             Steps+=1
@@ -125,7 +125,7 @@ class AStar:
                 if self.Validate():
                     Path=self.CompilePath()
                     if PrintFinal:
-                        self.PrintBoard(RenderEnd=True,Path=Path)
+                        self.PrintBoard(RenderEnd=True,Path=Path,StartLocation=StartLocation)
                     return Path
                 
                 return False
@@ -152,15 +152,15 @@ class AStar:
                         Path=self.CompilePath()
                         if PrintFinal:
                             
-                            self.PrintBoard(RenderEnd=True,Path=Path)
+                            self.PrintBoard(RenderEnd=True,Path=Path,StartLocation=StartLocation)
                         return Path
                     return False
                 
             if PrintBoard:
-                self.PrintBoard(ShowAgent=ShowSearching)
+                self.PrintBoard(ShowAgent=ShowSearching,StartLocation=StartLocation,Steps=Steps)
             if ShowSearching:
                 time.sleep(0.05)
-            if Steps == 30000:
+            if Steps == (self.Rows * self.Columns) / 1.5:
                 return False
             #return 
 
@@ -284,11 +284,11 @@ class GreedyBestFirstSearch:
 
 if __name__ == "__main__":
     while True:
-        Target=(random.randint(10,14),random.randint(10,14))
-
-        Board=Grid(15,15,WallChance=30,Board=[])
-        print(Board.Board,len(Board.Board))
-        Board.Board[0][0]=1
+        Target=(random.randint(15,29),random.randint(15,29))
+        StartLocation=(random.randint(0,15),random.randint(0,15))
+        Board=Grid(30,30,WallChance=30,Board=[])
+        #print(Board.Board,len(Board.Board))
+        Board.Board[StartLocation[1]][StartLocation[0]]=1
         #Board.Board[Target[0]][Target[1]]=1
         #print(Board.Board)
         Board.Board[Target[1]][Target[0]]=1
@@ -297,7 +297,7 @@ if __name__ == "__main__":
         
         Start=time.time()
         #time.sleep(1)
-        OutAS=AS.RunPathFind(Target=Target,PrintBoard=True,ShowSearching=True)
+        OutAS=AS.RunPathFind(Target=Target,PrintBoard=True,ShowSearching=True,StartLocation=StartLocation)
         if OutAS != False:
             print("Success AS")
             print(time.time() - Start)
@@ -312,7 +312,7 @@ if __name__ == "__main__":
               #  print("Failed GBFS")
         else:
             print("Failed AS")
-        time.sleep(10)
+        time.sleep(5)
     
 
     
