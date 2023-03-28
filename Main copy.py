@@ -19,7 +19,7 @@ class Grid:
 
 
 class AStar:
-    def __init__(self,Board,FWeight=1.2,AllowDiagonals=False):
+    def __init__(self,Board,FWeight=1.37,AllowDiagonals=False):
         self.Board={}
         self.AgentLocation=(0,0)
         self.FWeight=FWeight
@@ -149,15 +149,14 @@ class AStar:
                     if self.Validate():
                         Path=self.CompilePath()
                         if PrintFinal:
-                            if ShowSearching:
-                                print("Full Step")
+                            
                             self.PrintBoard(RenderEnd=True,Path=Path)
                         return Path
                     return False
             if PrintBoard:
                 self.PrintBoard(ShowAgent=ShowSearching)
             if ShowSearching:
-                time.sleep(0.1)
+                time.sleep(0.08)
             if Steps == 30000:
                 return False
             #return 
@@ -288,7 +287,7 @@ if __name__ == "__main__":
     #Board.Board[1][1]=-1
     #print(Board.Board)
     Board.Board[Target[0]][Target[1]]=1
-    AS=AStar(Board,AllowDiagonals=False,FWeight=1.2)
+    AS=AStar(Board,AllowDiagonals=False,FWeight=1.37)
     GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
     
     Start=time.time()
