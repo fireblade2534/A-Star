@@ -142,7 +142,7 @@ if __name__ == "__main__":
     
     Start=time.time()
     #time.sleep(1)
-    Out=AS.RunPathFind(Target=Target,PrintBoard=False)
+    Out=AS.RunPathFind(Target=Target,PrintBoard=True)
     if Out != False:
         print("Success")
     else:

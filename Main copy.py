@@ -20,7 +20,7 @@ class Grid:
 
 
 class AStar:
-    def __init__(self,Board,FWeight=1.4,AllowDiagonals=False):
+    def __init__(self,Board,FWeight=1.1,AllowDiagonals=False):
         self.Board={}
         self.AgentLocation=(0,0)
         self.FWeight=FWeight
@@ -115,7 +115,7 @@ class AStar:
         self.Target=Target
         self.OpenList={}
         self.ClosedList={}
-        self.OpenList[StartLocation]={"CostF":self.Hurestic(StartLocation,Dia=True),"CostG":0,"Parent":(-1,-1),"Checked":False}
+        self.OpenList[StartLocation]={"CostF":self.Hurestic(StartLocation,Dia=False),"CostG":0,"Parent":(-1,-1),"Checked":False}
         Steps=0
         while True:
             Steps+=1
@@ -143,9 +143,9 @@ class AStar:
                 #print(X,A)
                 if X in self.OpenList:
                     if Lowest[1]["CostG"] + 1 < self.OpenList[X]["CostG"]:
-                        self.OpenList[X]={"CostF":self.Hurestic(X,Dia=True) * self.FWeight + Lowest[1]["CostG"] + 1,"CostG":Lowest[1]["CostG"] + 1,"Parent":self.AgentLocation,"Checked":self.OpenList[X]["Checked"]}
+                        self.OpenList[X]={"CostF":self.Hurestic(X,Dia=False) * self.FWeight + Lowest[1]["CostG"] + 1,"CostG":Lowest[1]["CostG"] + 1,"Parent":self.AgentLocation,"Checked":self.OpenList[X]["Checked"]}
                 else:
-                    self.OpenList[X]={"CostF":self.Hurestic(X,Dia=True) * self.FWeight + Lowest[1]["CostG"] + 1,"CostG":Lowest[1]["CostG"] + 1,"Parent":self.AgentLocation,"Checked":False}
+                    self.OpenList[X]={"CostF":self.Hurestic(X,Dia=False) * self.FWeight + Lowest[1]["CostG"] + 1,"CostG":Lowest[1]["CostG"] + 1,"Parent":self.AgentLocation,"Checked":False}
 
                 if X == self.Target:
                     if self.Validate():
@@ -284,25 +284,25 @@ class GreedyBestFirstSearch:
 
 if __name__ == "__main__":
     while True:
-        Target=(random.randint(15,29),random.randint(15,29))
-        StartLocation=(random.randint(0,15),random.randint(0,15))
-        Board=Grid(30,30,WallChance=30,Board=[])
+        Target=(random.randint(0,30),random.randint(0,30))
+        StartLocation=(random.randint(0,30),random.randint(0,30))
+        Board=Grid(32,32,WallChance=30,Board=[])
         #print(Board.Board,len(Board.Board))
         Board.Board[StartLocation[1]][StartLocation[0]]=1
         #Board.Board[Target[0]][Target[1]]=1
         #print(Board.Board)
         Board.Board[Target[1]][Target[0]]=1
-        AS=AStar(Board,AllowDiagonals=False,FWeight=1.4)
+        AS=AStar(Board,AllowDiagonals=False,FWeight=1.1)
         GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
         
-        Start=time.time()
+        #Start=time.time()
         #time.sleep(1)
         OutAS=AS.RunPathFind(Target=Target,PrintBoard=True,ShowSearching=True,StartLocation=StartLocation)
         if OutAS != False:
             print("Success AS")
-            print(time.time() - Start)
+            #print(time.time() - Start)
             #exit()
-            Start=time.time()
+            #Start=time.time()
             #OutGBFS=GBFS.RunPathFind(Target=Target,PrintBoard=False)
             #if OutGBFS != False:
                # print("Success GBFS")
@@ -312,6 +312,7 @@ if __name__ == "__main__":
               #  print("Failed GBFS")
         else:
             print("Failed AS")
+       # exit()
         time.sleep(5)
     
 
