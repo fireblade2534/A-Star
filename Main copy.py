@@ -35,7 +35,7 @@ class AStar:
     
     def GetCandidates(self):
         Candidates={}
-        
+        WallsCount=0
         for Y in [-1,0,1]:
             for X in [-1,0,1]:
                 if ((X != 0 or Y != 0) and self.AllowDiagonals) or ((X == 0 or Y == 0) and (X != 0 or Y != 0) and not self.AllowDiagonals):
@@ -43,7 +43,14 @@ class AStar:
                         Check=self.Board[(self.AgentLocation[0] + X,self.AgentLocation[1] + Y)]
                         #print(Check)
                         if Check["Cost"] != -1:
-                            Candidates[(self.AgentLocation[0] + X, self.AgentLocation[1] + Y)]=Check["Cost"]
+                            
+                            if (X == 0 or Y == 0) or not self.AllowDiagonals:
+                                Candidates[(self.AgentLocation[0] + X, self.AgentLocation[1] + Y)]=Check["Cost"]
+                            else:
+                                Check1=self.Board[(self.AgentLocation[0],self.AgentLocation[1] + Y)]
+                                Check2=self.Board[(self.AgentLocation[0] + X,self.AgentLocation[1])]
+                                if not (Check1["Cost"] == -1 and Check2["Cost"] == -1):
+                                    Candidates[(self.AgentLocation[0] + X, self.AgentLocation[1] + Y)]=Check["Cost"]
         return Candidates
 
     def Hurestic(self,Pos,Dia=False):
@@ -284,15 +291,15 @@ class GreedyBestFirstSearch:
 
 if __name__ == "__main__":
     while True:
-        Target=(random.randint(0,30),random.randint(0,30))
-        StartLocation=(random.randint(0,30),random.randint(0,30))
-        Board=Grid(32,32,WallChance=30,Board=[])
+        Target=(random.randint(0,38),random.randint(0,38))
+        StartLocation=(random.randint(0,38),random.randint(0,38))
+        Board=Grid(39,39,WallChance=30,Board=[])
         #print(Board.Board,len(Board.Board))
         Board.Board[StartLocation[1]][StartLocation[0]]=1
         #Board.Board[Target[0]][Target[1]]=1
         #print(Board.Board)
         Board.Board[Target[1]][Target[0]]=1
-        AS=AStar(Board,AllowDiagonals=False,FWeight=1.1)
+        AS=AStar(Board,AllowDiagonals=True,FWeight=1.6)
         GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
         
         #Start=time.time()
