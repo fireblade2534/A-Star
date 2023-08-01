@@ -293,13 +293,13 @@ if __name__ == "__main__":
     while True:
         Target=(random.randint(0,38),random.randint(0,38))
         StartLocation=(random.randint(0,38),random.randint(0,38))
-        Board=Grid(39,39,WallChance=30,Board=[])
+        Board=Grid(39,39,WallChance=40,Board=[])
         #print(Board.Board,len(Board.Board))
         Board.Board[StartLocation[1]][StartLocation[0]]=1
         #Board.Board[Target[0]][Target[1]]=1
         #print(Board.Board)
         Board.Board[Target[1]][Target[0]]=1
-        AS=AStar(Board,AllowDiagonals=True,FWeight=1.6)
+        AS=AStar(Board,AllowDiagonals=False,FWeight=1.6)
         GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
         
         #Start=time.time()
