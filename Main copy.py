@@ -118,12 +118,13 @@ class AStar:
     def GetLowestOpenCost(self):
         return list(filter(lambda X: not X[1]["Checked"],sorted(self.OpenList.items(),key=lambda X: X[1]["CostF"])))
 
-    def RunPathFind(self,Target,PrintBoard=True,PrintFinal=True,ShowSearching=False,StartLocation=(0,0)):
+    def RunPathFind(self,Target,PrintBoard=True,PrintFinal=True,ShowSearching=False,StartLocation=(0,0),MaxDistanceMultiplyer=2):
         self.Target=Target
         self.OpenList={}
         self.ClosedList={}
         self.OpenList[StartLocation]={"CostF":self.Hurestic(StartLocation,Dia=False),"CostG":0,"Parent":(-1,-1),"Checked":False}
         Steps=0
+        MaxSteps=self.Hurestic(StartLocation,Dia=self.AllowDiagonals) * MaxDistanceMultiplyer
         while True:
             Steps+=1
             L=self.GetLowestOpenCost()
@@ -167,7 +168,7 @@ class AStar:
                 self.PrintBoard(ShowAgent=ShowSearching,StartLocation=StartLocation,Steps=Steps)
             if ShowSearching:
                 time.sleep(0.05)
-            if Steps == (self.Rows * self.Columns) / 1.5:
+            if Steps >= MaxSteps:
                 return False
             #return 
 
@@ -293,13 +294,13 @@ if __name__ == "__main__":
     while True:
         Target=(random.randint(0,38),random.randint(0,38))
         StartLocation=(random.randint(0,38),random.randint(0,38))
-        Board=Grid(39,39,WallChance=40,Board=[])
+        Board=Grid(39,39,WallChance=30,Board=[])
         #print(Board.Board,len(Board.Board))
         Board.Board[StartLocation[1]][StartLocation[0]]=1
         #Board.Board[Target[0]][Target[1]]=1
         #print(Board.Board)
         Board.Board[Target[1]][Target[0]]=1
-        AS=AStar(Board,AllowDiagonals=False,FWeight=1.6)
+        AS=AStar(Board,AllowDiagonals=True,FWeight=1.6)
         GBFS=GreedyBestFirstSearch(Board,AllowDiagonals=False)
         
         #Start=time.time()
