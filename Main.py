@@ -19,6 +19,7 @@ class AStar:
     def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
         self.StartLocation=StartLocation
         self.TargetLocation=TargetLocation
-        self.ExploredList={}
+        ExploredList={}
+        MovePosition=StartLocation
 
-        self.ExploredList
+        ExploredList[MovePosition]={}
