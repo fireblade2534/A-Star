@@ -23,13 +23,13 @@ class AStar:
     def GetLowestOpenCost(self):
         return list(filter(lambda X: not X[1]["Checked"],sorted(self.ExploredList.items(),key=lambda X: X[1]["CostFull"])))
 
-    def GeneratePath(self,StartID,TargetID):
+    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.5,DBWeight:float=1):
         self.StartID=StartID
         self.TargetID=TargetID
         self.ExploredList={}
-        MovePosition=StartID
 
-        self.ExploredList[MovePosition]={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"Checked":False}
+
+        self.ExploredList[StartID]={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"PreviousPlace":StartID,"Checked":False}
         Steps=0
         while Steps < 100:
             Lowest=self.GetLowestOpenCost()
@@ -38,10 +38,10 @@ class AStar:
                 CheckPositions=self.RefrenceFuntions["NeighbourSquares"](Lowest[0])
                 for ChekingPosition,CheckWeight in CheckPositions.items():
                     DistanceToOld=self.RefrenceFuntions["Distance"](Lowest[0],CheckPositions)
-                    if CheckPositions in self.ExploredList:
+                    if ChekingPosition in self.ExploredList:
                         
                     else:
-                        self.ExploredList[CheckPositions]=
+                        self.ExploredList[ChekingPosition]={"CostFull":(self.RefrenceFuntions["Distance"](ChekingPosition,TargetID) * DTWeight) + self,"DistanceFromStart":0,"PreviousPlace":StartID,"Checked":False}
                 print(CheckPositions)
                 print(Lowest)
             Steps+=1
