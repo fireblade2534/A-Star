@@ -15,14 +15,9 @@ class Grid:
 
 class AStar:
 
-    @staticmethod
-    def Distance(Position1:tuple[int],Position2:tuple[int],Diagonal:bool):
-        if Diagonal:
-            return math.sqrt(((Position1[0] - Position2[0]) ** 2) + ((Position1[1] - Position2[1]) ** 2))
-        return (Position1[0] - Position2[0]) + (Position1[1] - Position2[1])
+    def __init__(self,RefrenceFuntions:dict):
 
-    def __init__(self):
-        pass
+        self.RefrenceFuntions=RefrenceFuntions
 
     def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
         self.StartLocation=StartLocation
@@ -34,9 +29,16 @@ class AStar:
 
 
 class GridAStar2D:
+    def Distance(self,Position1:tuple[int],Position2:tuple[int]):
+        if self.AllowDiagonals:
+            return math.sqrt(((Position1[0] - Position2[0]) ** 2) + ((Position1[1] - Position2[1]) ** 2))
+        return (Position1[0] - Position2[0]) + (Position1[1] - Position2[1])
+    
+    def Weight(self,Position:tuple[int]):
+        return self.Grid
     def __init__(self,Grid:Grid,AllowDiagonals=False):
         self.Grid=Grid
         self.AllowDiagonals=AllowDiagonals
-
+        MainAStar=AStar({"Distance":self.Distance,})
     def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
-
+        pass
