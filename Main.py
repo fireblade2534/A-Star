@@ -129,5 +129,7 @@ class GridAStar2D:
         self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=True)
 
 if __name__ == "__main__":
-    A2D=GridAStar2D(Grid=Grid(10,10))
-    A2D.GeneratePath((0,0),(5,5))
+    G=Grid(40,40)
+    G.RandomPopulateGrid(10)
+    A2D=GridAStar2D(Grid=G)
+    A2D.GeneratePath((10,10),(35,35))
