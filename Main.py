@@ -171,7 +171,7 @@ class AStarV1:
                 return False
             #return 
 
-
+#New codde
 
 class AStar:
 
@@ -195,7 +195,7 @@ class AStar:
             
 
 
-    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.25,DBWeight:float=1.1,AnimatePathing:bool=False,ShowEndPath:bool=False):
+    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.45,DBWeight:float=1,AnimatePathing:bool=False,ShowEndPath:bool=False):
         self.StartID=StartID
         self.TargetID=TargetID
         self.ExploredList={}
@@ -293,17 +293,27 @@ class GridAStar2D:
     def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
         self.StartLocation=StartLocation
         self.TargetLocation=TargetLocation
-        return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=False,ShowEndPath=True)
+        return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=False,ShowEndPath=False)
 
 if __name__ == "__main__":
-    G=Grid(40,40)
-    G.RandomPopulateGrid(10)
-    StartLocation=(10,10)
-    TargetLocation=(35,35)
+    Interations=300
+    V1=0
+    V2=0
+    for X in range(Interations):
+        G=Grid(40,40)
+        G.RandomPopulateGrid(20)
 
-    A2D=GridAStar2D(Grid=G)
-    print(len(A2D.GeneratePath(StartLocation,TargetLocation)))
-    
+        
+        StartLocation=(10,10)
+        TargetLocation=(35,35)
+        StartTime=time.time()
+        A2D=GridAStar2D(Grid=G)
+        A2D.GeneratePath(StartLocation,TargetLocation)
+        V2+=(time.time() - StartTime)
+        StartTime=time.time()
+        AV1=AStarV1(G)
+        AV1.RunPathFind(Target=TargetLocation,PrintBoard=False,StartLocation=StartLocation,PrintFinal=False)
+        V1+=(time.time() - StartTime)
+    print(f"V1: {V1 / Interations   }")
+    print(f"V2: {V2 / Interations   }")
 
-    AV1=AStarV1(G)
-    print(len(AV1.RunPathFind(Target=TargetLocation,PrintBoard=False,StartLocation=StartLocation)))
