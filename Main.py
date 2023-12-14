@@ -35,8 +35,14 @@ class AStar:
             Lowest=self.GetLowestOpenCost()
             if len(Lowest) > 0:
                 Lowest=Lowest[0]
-                CheckSquares=self.RefrenceFuntions["NeighbourSquares"](Lowest[0])
-                print(CheckSquares)
+                CheckPositions=self.RefrenceFuntions["NeighbourSquares"](Lowest[0])
+                for ChekingPosition,CheckWeight in CheckPositions.items():
+                    DistanceToOld=self.RefrenceFuntions["Distance"](Lowest[0],CheckPositions)
+                    if CheckPositions in self.ExploredList:
+                        
+                    else:
+                        self.ExploredList[CheckPositions]=
+                print(CheckPositions)
                 print(Lowest)
             Steps+=1
 
