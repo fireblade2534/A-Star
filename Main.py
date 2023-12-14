@@ -31,4 +31,8 @@ class AStar:
         ExploredList={}
         MovePosition=StartLocation
 
-        ExploredList[MovePosition]={"Distance":}
+        ExploredList[MovePosition]={"Distance":AStar.Distance(StartLocation,TargetLocation,self.AllowDiagonals),"DistanceFromStart"}
+
+
+class 2DGridAStar:
+    def __init__()
