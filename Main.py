@@ -21,9 +21,8 @@ class AStar:
             return math.sqrt(((Position1[0] - Position2[0]) ** 2) + ((Position1[1] - Position2[1]) ** 2))
         return (Position1[0] - Position2[0]) + (Position1[1] - Position2[1])
 
-    def __init__(self,Grid:Grid,AllowDiagonals:bool=False):
-        self.Grid=Grid
-        self.AllowDiagonals=AllowDiagonals
+    def __init__(self):
+        pass
 
     def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
         self.StartLocation=StartLocation
@@ -31,8 +30,13 @@ class AStar:
         ExploredList={}
         MovePosition=StartLocation
 
-        ExploredList[MovePosition]={"Distance":AStar.Distance(StartLocation,TargetLocation,self.AllowDiagonals),"DistanceFromStart"}
+        ExploredList[MovePosition]={"Distance":AStar.Distance(StartLocation,TargetLocation,self.AllowDiagonals),"DistanceFromStart":0}
 
 
-class 2DGridAStar:
-    def __init__()
+class GridAStar2D:
+    def __init__(self,Grid:Grid,AllowDiagonals=False):
+        self.Grid=Grid
+        self.AllowDiagonals=AllowDiagonals
+
+    def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
+
