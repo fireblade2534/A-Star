@@ -203,7 +203,7 @@ class AStar:
 
         self.ExploredList[StartID]={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"PreviousPlace":StartID,"Checked":False}
         Steps=0
-        while Steps < 300:
+        while Steps < 1400:
             Lowest=self.GetLowestOpenCost()
 
             if len(Lowest) > 0:
@@ -296,24 +296,37 @@ class GridAStar2D:
         return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=False,ShowEndPath=False)
 
 if __name__ == "__main__":
-    Interations=300
+    Interations=69
     V1=0
+    V1Sucesses=0
     V2=0
+    V2Sucesses=0
     for X in range(Interations):
-        G=Grid(40,40)
+        G=Grid(1000,1000)
         G.RandomPopulateGrid(20)
 
         
         StartLocation=(10,10)
-        TargetLocation=(35,35)
-        StartTime=time.time()
-        A2D=GridAStar2D(Grid=G)
-        A2D.GeneratePath(StartLocation,TargetLocation)
-        V2+=(time.time() - StartTime)
+        TargetLocation=(70,70)
+
         StartTime=time.time()
         AV1=AStarV1(G)
-        AV1.RunPathFind(Target=TargetLocation,PrintBoard=False,StartLocation=StartLocation,PrintFinal=False)
+        Path=AV1.RunPathFind(Target=TargetLocation,PrintBoard=False,StartLocation=StartLocation,PrintFinal=False)
+        V1Sucesses+=1 if Path != False else 0
+        print(f"Time V1: {(time.time() - StartTime)}")
         V1+=(time.time() - StartTime)
+
+        StartTime=time.time()
+        A2D=GridAStar2D(Grid=G)
+        Path=A2D.GeneratePath(StartLocation,TargetLocation)
+        V2Sucesses+=1 if len(Path) > 0 else 0
+        print(f"Time V2: {(time.time() - StartTime)}")
+        V2+=(time.time() - StartTime)
+        
+        print(f"Iteration {X}")
+    
     print(f"V1: {V1 / Interations   }")
+    print(f"V1 Sucess: {V1Sucesses}")
     print(f"V2: {V2 / Interations   }")
+    print(f"V2 Sucess: {V2Sucesses}")
 
