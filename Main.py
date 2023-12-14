@@ -19,13 +19,26 @@ class AStar:
 
         self.RefrenceFuntions=RefrenceFuntions
 
-    def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
-        self.StartLocation=StartLocation
-        self.TargetLocation=TargetLocation
-        ExploredList={}
-        MovePosition=StartLocation
 
-        ExploredList[MovePosition]={"Distance":AStar.Distance(StartLocation,TargetLocation,self.AllowDiagonals),"DistanceFromStart":0}
+    def GetLowestOpenCost(self):
+        return list(filter(lambda X: not X[1]["Checked"],sorted(self.ExploredList.items(),key=lambda X: X[1]["CostFull"])))
+
+    def GeneratePath(self,StartID,TargetID):
+        self.StartID=StartID
+        self.TargetID=TargetID
+        self.ExploredList={}
+        MovePosition=StartID
+
+        self.ExploredList[MovePosition]={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"Checked":False}
+        Steps=0
+        while Steps < 100:
+            Lowest=self.GetLowestOpenCost()
+            if len(Lowest) > 0:
+                Lowest=Lowest[0]
+                CheckSquares=self.RefrenceFuntions["NeighbourSquares"](Lowest[0])
+                print(CheckSquares)
+                print(Lowest)
+            Steps+=1
 
 
 class GridAStar2D:
@@ -35,10 +48,26 @@ class GridAStar2D:
         return (Position1[0] - Position2[0]) + (Position1[1] - Position2[1])
     
     def Weight(self,Position:tuple[int]):
-        return self.Grid
+        return self.Grid.Board[Position[1]][Position[0]]
+
+    def SquaresAround(self,Position:tuple[int]):
+        OutputList={}
+        Directions=[(0,1),(1,0),(0,-1),(-1,0)]
+        for Direction in Directions:
+            NewPosition=(Position[0] + Direction[0],Position[1] + Direction[1])
+            if NewPosition[0] < self.Grid.Width and NewPosition[0] >= 0 and NewPosition[1] < self.Grid.Height and NewPosition[1] >= 0:
+                OutputList[NewPosition]=self.Weight(NewPosition)
+        return OutputList
+    
+
+
     def __init__(self,Grid:Grid,AllowDiagonals=False):
         self.Grid=Grid
         self.AllowDiagonals=AllowDiagonals
-        MainAStar=AStar({"Distance":self.Distance,})
+        self.MainAStar=AStar({"Distance":self.Distance,"Weight":self.Weight,"NeighbourSquares":self.SquaresAround})
     def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
-        pass
+        self.MainAStar.GeneratePath(StartLocation,TargetLocation)
+
+if __name__ == "__main__":
+    A2D=GridAStar2D(Grid=Grid(10,10))
+    A2D.GeneratePath((0,0),(5,5))
