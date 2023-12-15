@@ -202,7 +202,7 @@ class AStar:
             
 
 
-    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.45,DBWeight:float=1,AnimatePathing:bool=False,ShowEndPath:bool=False):
+    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.001,DBWeight:float=1,AnimatePathing:bool=False,ShowEndPath:bool=False):
         self.StartID=StartID
         self.TargetID=TargetID
         self.ExploredList={}
@@ -312,17 +312,18 @@ class GridAStar2D:
 from cProfile import Profile
 from pstats import SortKey, Stats
 def RunProfiling():
-    G=Grid(1000,1000)
+    G=Grid(15,15)
     random.seed(10)
     G.RandomPopulateGrid(20)
-    StartLocation=(10,10)
-    TargetLocation=(700,700)
+    StartLocation=(5,5)
+    
+    TargetLocation=(10,10)
+    G.Board[TargetLocation[1]][TargetLocation[0]]=0
     StartTime=time.time()
     with Profile(timeunit=0.00001) as profile:
-        for X in range(0,10):
+        for X in range(0,1):
             A2D=GridAStar2D(Grid=G)
-            Path=A2D.GeneratePath(StartLocation,TargetLocation,ShowEndPath=False)
-            print(len(Path))
+            Path=A2D.GeneratePath(StartLocation,TargetLocation,ShowEndPath=True,AnimatePathing=True)
         (
             Stats(profile)
             .strip_dirs()
