@@ -185,7 +185,8 @@ class AStar:
 
 
     def GetLowestOpenCost(self):
-        Fil=[(X,self.ExploredList[X]) for X in self.OpenList]
+        Fil=list(self.OpenList.items())
+        #Fil=[(X,self.ExploredList[X]) for X in self.OpenList]
         #Fil=filter(lambda X: not X[1]["Checked"],self.ExploredList.items())
         return AStar.FastLowest(Fil)
 
@@ -205,12 +206,12 @@ class AStar:
         self.StartID=StartID
         self.TargetID=TargetID
         self.ExploredList={}
-        self.OpenList=set()
+        self.OpenList={}
 
         DefaultItem={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"PreviousPlace":StartID,"Checked":False}
 
         self.ExploredList[StartID]=DefaultItem
-        self.OpenList.add(StartID)
+        self.OpenList[StartID]=DefaultItem
         Steps=0
         while Steps < 1400:
             Lowest=self.GetLowestOpenCost()
@@ -230,10 +231,11 @@ class AStar:
                             NewChecking={"CostFull":(self.RefrenceFuntions["Distance"](CheckingPosition,TargetID) * DTWeight) + (NewDistanceToStart * DBWeight) + CheckWeight,"DistanceFromStart":NewDistanceToStart,"PreviousPlace":Lowest[0],"Checked":self.ExploredList[CheckingPosition]["Checked"]}
                             self.ExploredList[CheckingPosition]=NewChecking
                             if NewChecking["Checked"] == False:
-                                self.OpenList.add(CheckingPosition)
+                                self.OpenList[CheckingPosition]=NewChecking
                     else:
-                        self.ExploredList[CheckingPosition]={"CostFull":(self.RefrenceFuntions["Distance"](CheckingPosition,TargetID) * DTWeight) + (NewDistanceToStart * DBWeight) + CheckWeight,"DistanceFromStart":NewDistanceToStart,"PreviousPlace":Lowest[0],"Checked":False}
-                        self.OpenList.add(CheckingPosition)
+                        NewChecking={"CostFull":(self.RefrenceFuntions["Distance"](CheckingPosition,TargetID) * DTWeight) + (NewDistanceToStart * DBWeight) + CheckWeight,"DistanceFromStart":NewDistanceToStart,"PreviousPlace":Lowest[0],"Checked":False}
+                        self.ExploredList[CheckingPosition]=NewChecking
+                        self.OpenList[CheckingPosition]=NewChecking
 
                     if CheckingPosition == self.TargetID:
                         #print("DONE")
@@ -243,7 +245,7 @@ class AStar:
                         return FinalPath
 
                 self.ExploredList[Lowest[0]]["Checked"]=True
-                self.OpenList.remove(Lowest[0])
+                del self.OpenList[Lowest[0]]
                
 
                 #print(CheckPositions)
