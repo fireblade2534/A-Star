@@ -202,7 +202,7 @@ class AStar:
             
 
 
-    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.001,DBWeight:float=1,AnimatePathing:bool=False,ShowEndPath:bool=False):
+    def GeneratePath(self,StartID,TargetID,DTWeight:float=1.55,DBWeight:float=1,AnimatePathing:bool=False,ShowEndPath:bool=False):
         self.StartID=StartID
         self.TargetID=TargetID
         self.ExploredList={}
@@ -255,9 +255,10 @@ class AStar:
 
 class GridAStar2D:
     def Distance(self,Position1:tuple[int],Position2:tuple[int]):
-        if self.AllowDiagonals:
-            return math.sqrt(((Position1[0] - Position2[0]) ** 2) + ((Position1[1] - Position2[1]) ** 2))
-        return abs(Position1[0] - Position2[0]) + abs(Position1[1] - Position2[1])
+        return math.sqrt(((Position1[0] - Position2[0]) ** 2) + ((Position1[1] - Position2[1]) ** 2))
+        #if self.AllowDiagonals:
+            
+        #return abs(Position1[0] - Position2[0]) + abs(Position1[1] - Position2[1])
     
     def Weight(self,Position:tuple[int]):
         return self.Grid.Board[Position[1]][Position[0]]
@@ -305,15 +306,15 @@ class GridAStar2D:
         self.Grid=Grid
         self.AllowDiagonals=AllowDiagonals
         self.MainAStar=AStar({"Distance":self.Distance,"NeighbourSquares":self.SquaresAround,"Render":self.RenderGrid})
-    def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0),AnimatePathing=False,ShowEndPath=False):
+    def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0),AnimatePathing=False,ShowEndPath=False,DTWeight:float=1.5):
         self.StartLocation=StartLocation
         self.TargetLocation=TargetLocation
-        return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=AnimatePathing,ShowEndPath=ShowEndPath)
+        return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=AnimatePathing,ShowEndPath=ShowEndPath,DTWeight=DTWeight)
 from cProfile import Profile
 from pstats import SortKey, Stats
 def RunProfiling():
     G=Grid(15,15)
-    random.seed(10)
+    #random.seed(10)
     G.RandomPopulateGrid(20)
     StartLocation=(5,5)
     
@@ -334,20 +335,29 @@ def RunProfiling():
     
     print(f"Time V2: {(time.time() - StartTime)}")
 if __name__ == "__main__":
-    RunProfiling()
-    exit()
+    #RunProfiling()
+   # exit()
     Interations=69
     V1=0
     V1Sucesses=0
     V2=0
     V2Sucesses=0
     for X in range(Interations):
-        G=Grid(100,100)
-        G.RandomPopulateGrid(20)
+        G=Grid(35,35)
+        G.RandomPopulateGrid(28)
 
         
-        StartLocation=(10,10)
-        TargetLocation=(70,70)
+        StartLocation=(5,5)
+        TargetLocation=(30,30)
+        G.Board[TargetLocation[1]][TargetLocation[0]]=0
+        StartTime=time.time()
+        A2D=GridAStar2D(Grid=G)
+        Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=False,ShowEndPath=False,DTWeight=1)
+        V2Sucesses+=1 if len(Path) > 0 else 0
+        print(f"Time V2: {(time.time() - StartTime)}")
+        V2+=(time.time() - StartTime)
+
+        exit()
 
         StartTime=time.time()
         AV1=AStarV1(G)
