@@ -310,73 +310,19 @@ class GridAStar2D:
         self.StartLocation=StartLocation
         self.TargetLocation=TargetLocation
         return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=AnimatePathing,ShowEndPath=ShowEndPath,DTWeight=DTWeight)
-from cProfile import Profile
-from pstats import SortKey, Stats
-def RunProfiling():
-    G=Grid(15,15)
-    #random.seed(10)
-    G.RandomPopulateGrid(20)
-    StartLocation=(5,5)
-    
-    TargetLocation=(10,10)
-    G.Board[TargetLocation[1]][TargetLocation[0]]=0
-    StartTime=time.time()
-    with Profile(timeunit=0.00001) as profile:
-        for X in range(0,1):
-            A2D=GridAStar2D(Grid=G)
-            Path=A2D.GeneratePath(StartLocation,TargetLocation,ShowEndPath=True,AnimatePathing=True)
-        (
-            Stats(profile)
-            .strip_dirs()
-            .sort_stats(SortKey.TIME)
-            .print_stats(20)
-         )
-    
-    
-    print(f"Time V2: {(time.time() - StartTime)}")
+
 if __name__ == "__main__":
     #RunProfiling()
    # exit()
-    Interations=69
-    V1=0
-    V1Sucesses=0
-    V2=0
-    V2Sucesses=0
-    for X in range(Interations):
-        G=Grid(35,35)
-        G.RandomPopulateGrid(28)
+    G=Grid(35,35)
+    G.RandomPopulateGrid(28)
 
-        
-        StartLocation=(5,5)
-        TargetLocation=(30,30)
-        G.Board[TargetLocation[1]][TargetLocation[0]]=0
-        StartTime=time.time()
-        A2D=GridAStar2D(Grid=G)
-        Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=False,ShowEndPath=False,DTWeight=1)
-        V2Sucesses+=1 if len(Path) > 0 else 0
-        print(f"Time V2: {(time.time() - StartTime)}")
-        V2+=(time.time() - StartTime)
-
-        exit()
-
-        StartTime=time.time()
-        AV1=AStarV1(G)
-        Path=AV1.RunPathFind(Target=TargetLocation,PrintBoard=False,StartLocation=StartLocation,PrintFinal=False)
-        V1Sucesses+=1 if Path != False else 0
-        print(f"Time V1: {(time.time() - StartTime)}")
-        V1+=(time.time() - StartTime)
-
-        StartTime=time.time()
-        A2D=GridAStar2D(Grid=G)
-        Path=A2D.GeneratePath(StartLocation,TargetLocation)
-        V2Sucesses+=1 if len(Path) > 0 else 0
-        print(f"Time V2: {(time.time() - StartTime)}")
-        V2+=(time.time() - StartTime)
-        
-        print(f"Iteration {X}")
     
-    print(f"V1: {V1 / Interations   }")
-    print(f"V1 Sucess: {V1Sucesses}")
-    print(f"V2: {V2 / Interations   }")
-    print(f"V2 Sucess: {V2Sucesses}")
+    StartLocation=(5,5)
+    TargetLocation=(30,30)
+    G.Board[TargetLocation[1]][TargetLocation[0]]=0
+    StartTime=time.time()
+    A2D=GridAStar2D(Grid=G)
+    Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=True,ShowEndPath=True,DTWeight=1.3)
+
 
