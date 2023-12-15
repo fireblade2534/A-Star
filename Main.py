@@ -179,9 +179,15 @@ class AStar:
 
         self.RefrenceFuntions=RefrenceFuntions
 
+    @staticmethod
+    def FastLowest(List:list):
+        return min(List, key=lambda x: x[1]["CostFull"], default=None)
+
 
     def GetLowestOpenCost(self):
-        return list(filter(lambda X: not X[1]["Checked"],sorted(self.ExploredList.items(),key=lambda X: X[1]["CostFull"])))
+        Fil=[(X,self.ExploredList[X]) for X in self.OpenList]
+        #Fil=filter(lambda X: not X[1]["Checked"],self.ExploredList.items())
+        return AStar.FastLowest(Fil)
 
     def CompilePath(self):
         CurrentSquare=self.TargetID
@@ -199,15 +205,17 @@ class AStar:
         self.StartID=StartID
         self.TargetID=TargetID
         self.ExploredList={}
+        self.OpenList=set()
 
+        DefaultItem={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"PreviousPlace":StartID,"Checked":False}
 
-        self.ExploredList[StartID]={"CostFull":self.RefrenceFuntions["Distance"](StartID,TargetID),"DistanceFromStart":0,"PreviousPlace":StartID,"Checked":False}
+        self.ExploredList[StartID]=DefaultItem
+        self.OpenList.add(StartID)
         Steps=0
         while Steps < 1400:
             Lowest=self.GetLowestOpenCost()
 
-            if len(Lowest) > 0:
-                Lowest=Lowest[0]
+            if Lowest != None:
                 if AnimatePathing:
                     
                     self.RefrenceFuntions["Render"](list(self.ExploredList.keys()),[],Lowest[0],StartID,TargetID)
@@ -219,9 +227,13 @@ class AStar:
                     NewDistanceToStart=self.ExploredList[Lowest[0]]["DistanceFromStart"] + DistanceToOld
                     if CheckingPosition in self.ExploredList:
                         if NewDistanceToStart < self.ExploredList[CheckingPosition]["DistanceFromStart"]:
-                            self.ExploredList[CheckingPosition]={"CostFull":(self.RefrenceFuntions["Distance"](CheckingPosition,TargetID) * DTWeight) + (NewDistanceToStart * DBWeight) + CheckWeight,"DistanceFromStart":NewDistanceToStart,"PreviousPlace":Lowest[0],"Checked":self.ExploredList[CheckingPosition]["Checked"]}
+                            NewChecking={"CostFull":(self.RefrenceFuntions["Distance"](CheckingPosition,TargetID) * DTWeight) + (NewDistanceToStart * DBWeight) + CheckWeight,"DistanceFromStart":NewDistanceToStart,"PreviousPlace":Lowest[0],"Checked":self.ExploredList[CheckingPosition]["Checked"]}
+                            self.ExploredList[CheckingPosition]=NewChecking
+                            if NewChecking["Checked"] == False:
+                                self.OpenList.add(CheckingPosition)
                     else:
                         self.ExploredList[CheckingPosition]={"CostFull":(self.RefrenceFuntions["Distance"](CheckingPosition,TargetID) * DTWeight) + (NewDistanceToStart * DBWeight) + CheckWeight,"DistanceFromStart":NewDistanceToStart,"PreviousPlace":Lowest[0],"Checked":False}
+                        self.OpenList.add(CheckingPosition)
 
                     if CheckingPosition == self.TargetID:
                         #print("DONE")
@@ -231,6 +243,7 @@ class AStar:
                         return FinalPath
 
                 self.ExploredList[Lowest[0]]["Checked"]=True
+                self.OpenList.remove(Lowest[0])
                
 
                 #print(CheckPositions)
@@ -253,7 +266,7 @@ class GridAStar2D:
         for Direction in Directions:
             NewPosition=(Position[0] + Direction[0],Position[1] + Direction[1])
             if NewPosition[0] < self.Grid.Width and NewPosition[0] >= 0 and NewPosition[1] < self.Grid.Height and NewPosition[1] >= 0:
-                SquareWeight=self.Weight(NewPosition)
+                SquareWeight=self.Grid.Board[NewPosition[1]][NewPosition[0]]
                 if SquareWeight != -1:
                     OutputList[NewPosition]=SquareWeight
         return OutputList
@@ -263,7 +276,7 @@ class GridAStar2D:
         for Y in range(0,self.Grid.Height):
             for X in range(0,self.Grid.Width):
                 Final="⬜"
-                if self.Weight((X,Y)) == -1:
+                if self.Grid.Board[Y][X] == -1:
                     Final="⬛"
                 if (X,Y) in ExploredSquares:
                     Final="🟨"
@@ -289,20 +302,43 @@ class GridAStar2D:
     def __init__(self,Grid:Grid,AllowDiagonals=False):
         self.Grid=Grid
         self.AllowDiagonals=AllowDiagonals
-        self.MainAStar=AStar({"Distance":self.Distance,"Weight":self.Weight,"NeighbourSquares":self.SquaresAround,"Render":self.RenderGrid})
-    def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0)):
+        self.MainAStar=AStar({"Distance":self.Distance,"NeighbourSquares":self.SquaresAround,"Render":self.RenderGrid})
+    def GeneratePath(self,StartLocation:tuple[int]=(0,0),TargetLocation:tuple[int]=(0,0),AnimatePathing=False,ShowEndPath=False):
         self.StartLocation=StartLocation
         self.TargetLocation=TargetLocation
-        return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=False,ShowEndPath=False)
-
+        return self.MainAStar.GeneratePath(StartLocation,TargetLocation,AnimatePathing=AnimatePathing,ShowEndPath=ShowEndPath)
+from cProfile import Profile
+from pstats import SortKey, Stats
+def RunProfiling():
+    G=Grid(1000,1000)
+    random.seed(10)
+    G.RandomPopulateGrid(20)
+    StartLocation=(10,10)
+    TargetLocation=(700,700)
+    StartTime=time.time()
+    with Profile(timeunit=0.00001) as profile:
+        for X in range(0,10):
+            A2D=GridAStar2D(Grid=G)
+            Path=A2D.GeneratePath(StartLocation,TargetLocation,ShowEndPath=False)
+        (
+            Stats(profile)
+            .strip_dirs()
+            .sort_stats(SortKey.TIME)
+            .print_stats(20)
+         )
+    
+    
+    print(f"Time V2: {(time.time() - StartTime)}")
 if __name__ == "__main__":
+    RunProfiling()
+    exit()
     Interations=69
     V1=0
     V1Sucesses=0
     V2=0
     V2Sucesses=0
     for X in range(Interations):
-        G=Grid(1000,1000)
+        G=Grid(100,100)
         G.RandomPopulateGrid(20)
 
         
