@@ -213,7 +213,7 @@ class AStar:
         self.ExploredList[StartID]=DefaultItem
         self.OpenList[StartID]=DefaultItem
         Steps=0
-        while Steps < 1400:
+        while Steps < 140000:
             Lowest=self.GetLowestOpenCost()
 
             if Lowest != None:
@@ -322,6 +322,7 @@ def RunProfiling():
         for X in range(0,10):
             A2D=GridAStar2D(Grid=G)
             Path=A2D.GeneratePath(StartLocation,TargetLocation,ShowEndPath=False)
+            print(len(Path))
         (
             Stats(profile)
             .strip_dirs()
