@@ -323,6 +323,6 @@ if __name__ == "__main__":
     G.Board[TargetLocation[1]][TargetLocation[0]]=0
     StartTime=time.time()
     A2D=GridAStar2D(Grid=G)
-    Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=True,ShowEndPath=True,DTWeight=1.3)
+    Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=True,ShowEndPath=True,DTWeight=2)
 
 
