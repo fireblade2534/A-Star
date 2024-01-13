@@ -266,10 +266,15 @@ class GridAStar2D:
     def SquaresAround(self,Position:tuple[int]):
         OutputList={}
         Directions=[(1,0),(0,1),(0,-1),(-1,0)]
+        if self.AllowDiagonals:
+            Directions+=[(1,1),(-1,-1),(-1,1),(1,-1)]
         for Direction in Directions:
             NewPosition=(Position[0] + Direction[0],Position[1] + Direction[1])
             if NewPosition[0] < self.Grid.Width and NewPosition[0] >= 0 and NewPosition[1] < self.Grid.Height and NewPosition[1] >= 0:
                 SquareWeight=self.Grid.Board[NewPosition[1]][NewPosition[0]]
+                if not 0 in Direction:
+                    if self.Grid.Board[NewPosition[1]][Position[0]] == -1 and self.Grid.Board[Position[1]][NewPosition[0]] == -1:
+                        continue
                 if SquareWeight != -1:
                     OutputList[NewPosition]=SquareWeight
         return OutputList
@@ -314,15 +319,18 @@ class GridAStar2D:
 if __name__ == "__main__":
     #RunProfiling()
    # exit()
-    G=Grid(35,35)
-    G.RandomPopulateGrid(28)
+    while True:
+        G=Grid(35,35)
+        G.RandomPopulateGrid(28)
 
+        
+        StartLocation=(5,5)
+        TargetLocation=(30,30)
+        G.Board[TargetLocation[1]][TargetLocation[0]]=0
+        StartTime=time.time()
+        A2D=GridAStar2D(Grid=G,AllowDiagonals=True)
+        Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=True,ShowEndPath=True,DTWeight=2)
+        time.sleep(5)
     
-    StartLocation=(5,5)
-    TargetLocation=(30,30)
-    G.Board[TargetLocation[1]][TargetLocation[0]]=0
-    StartTime=time.time()
-    A2D=GridAStar2D(Grid=G)
-    Path=A2D.GeneratePath(StartLocation,TargetLocation,AnimatePathing=True,ShowEndPath=True,DTWeight=2)
 
 
